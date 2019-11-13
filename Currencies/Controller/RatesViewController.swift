@@ -164,6 +164,7 @@ extension RatesViewController: UITableViewDelegate, UITableViewDataSource {
 //MARK: - UI Setup
 extension RatesViewController {
     func setupUI() {
+        
         self.view.addSubview(tableView)
         tableView.addSubview(refreshControl)
         
