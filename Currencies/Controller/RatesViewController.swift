@@ -38,6 +38,10 @@ class RatesViewController: UIViewController {
         pickCurrencyVC.currencyNumber = .first
         self.navigationController?.pushViewController(pickCurrencyVC, animated: true)
     }
+    
+    @objc func refresh(sender: AnyObject) {
+        loadExchangeRates(realm: realm)
+    }
 
     //MARK: - Properties
     var realm: Realm
@@ -53,6 +57,11 @@ class RatesViewController: UIViewController {
         tableView.tableFooterView = UIView()
         return tableView
     }()
+    
+    lazy var refreshControl: UIRefreshControl = {
+        let refreshControl = UIRefreshControl()
+        return refreshControl
+    }()
 
 }
 
@@ -60,6 +69,7 @@ class RatesViewController: UIViewController {
 extension RatesViewController {
     func loadExchangeRates(realm: Realm) {
         exchangeRates = realm.objects(ExchangeRate.self)
+        self.refreshControl.endRefreshing()
     }
     
     func observeExchangeRates() {
@@ -155,6 +165,10 @@ extension RatesViewController: UITableViewDelegate, UITableViewDataSource {
 extension RatesViewController {
     func setupUI() {
         self.view.addSubview(tableView)
+        tableView.addSubview(refreshControl)
+        
+        refreshControl.attributedTitle = NSAttributedString(string: "Refreshing")
+        refreshControl.addTarget(self, action: #selector(refresh), for: .valueChanged)
         
         tableView.snp.makeConstraints { (make) in
             make.edges.equalToSuperview()
